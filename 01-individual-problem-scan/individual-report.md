@@ -111,23 +111,46 @@ Quick gut:
 **Draft workflow Card #1** (ASCII / Mermaid / ảnh đính kèm):
 
 ```text
-CURRENT STATE — 60 phút
+CURRENT STATE — 5 bước, 60 phút/lần × 2 lần/tuần
 
-[1 Đọc diff PR: 15'] → [2 Đọc comment trong PR: 10'] → [3 Lục Discord tìm feedback: 15']
-→ [4 Gom thành list việc cần sửa: 15']  <-- bottleneck (3-4 comment bị sót)
-→ [5 Nhắc member sửa + merge: 5']
+[1 Đọc diff PR để hiểu member đã sửa gì: 15' - PM]
+→ [2 Đọc comment review nằm trong PR: 10' - PM]
+→ [3 Lục Discord tìm feedback đã nói ngoài PR: 15' - PM]   <-- bottleneck
+→ [4 Gom tất cả thành một list việc cần sửa: 15' - PM]     <-- bottleneck
+→ [5 Nhắc member sửa, kiểm lại rồi merge: 5' - PM]
 
-FUTURE STATE — 23 phút
+Handoff yếu: feedback nằm ở HAI nơi (PR comment + Discord) và không có danh sách
+thống nhất, nên 3-4 comment bị sót mỗi lần và member phải sửa lại ở lần merge sau.
 
-[1 Rule: mọi feedback vào PR, script kéo comment PR + Discord export: 2' - máy]
-→ [2 AI phân loại must-fix / nice-to-have / câu hỏi: 1' - AI]
-→ [3 AI xuất checklist việc cần sửa kèm link tới comment gốc: 1' - AI]
-→ [4 PM đọc diff + đối chiếu checklist, tự quyết merge: 15']  <-- human boundary
+FUTURE STATE — 5 bước, 23 phút
+
+[1 Script kéo comment PR + Discord export về một chỗ: 2']      -- Rule/script
+→ [2 AI phân loại must-fix / nice-to-have / câu hỏi: 1']       -- Workflow step
+→ [3 AI xuất checklist kèm link tới comment gốc: 1']           -- Workflow step
+→ [4 PM đọc diff + đối chiếu checklist, tự quyết merge: 15']   -- Human boundary
 → [5 Nhắc member sửa + merge: 4']
 
-Fallback: nếu AI phân loại sai hoặc bỏ sót comment → bỏ checklist, PM đọc thẳng
-danh sách comment thô đã được gom sẵn (bước 1 vẫn có giá trị dù không có AI).
+Boundary:
+- AI chỉ gom và phân loại comment, luôn kèm link tới comment gốc để PM kiểm.
+- AI KHÔNG đánh giá code đúng/sai, KHÔNG tự merge, KHÔNG tự đóng comment.
+
+Fallback:
+AI phân loại sai hoặc bỏ sót comment → bỏ checklist, PM đọc thẳng danh sách comment
+thô đã được gom sẵn ở bước 1 (bước 1 vẫn có giá trị dù không có AI).
+Script hỏng → quay về cách cũ: tự lục PR + Discord như hiện tại.
+
+Bottleneck mới:
+Bước 4 — PM đọc diff và đối chiếu checklist. Đây là bottleneck chấp nhận được vì đó
+là điểm kiểm soát chất lượng trước khi merge.
 ```
+
+| Metric | Trước | Sau kỳ vọng | Ghi chú |
+|---|---:|---:|---|
+| Tổng thời gian | 60 phút | Dưới 25 phút | Target chính |
+| Số comment bị sót | 3-4 | 0-1 | Metric thứ hai, quan trọng ngang thời gian |
+| Số bước thủ công | 5/5 | 2/5 | PM vẫn đọc diff và quyết merge |
+| Bottleneck chính | Gom feedback từ 2 nơi | PM review + quyết merge | Human boundary |
+| Risk mới | Không có | AI phân loại sai mức độ, bỏ sót comment | Checklist bắt buộc kèm link comment gốc |
 
 
 ---
@@ -185,21 +208,44 @@ Quick gut:
 **Draft workflow Card #2:**
 
 ```text
-CURRENT STATE — 30 phút
+CURRENT STATE — 4 bước, 30 phút/lần × 2-3 lần/tuần
 
-[1 Nhớ mang máng: 5'] → [2 Search keyword Discord: 10']
-→ [3 Đọc nhiều thread tìm đoạn chốt: 10']  <-- bottleneck
-→ [4 Hỏi lại cả nhóm: 5']
+[1 Nhớ mang máng là đã bàn rồi, không nhớ ở đâu: 5' - người hỏi]
+→ [2 Search keyword trong Discord: 10' - người hỏi]
+→ [3 Đọc nhiều thread dài để tìm đúng đoạn chốt: 10' - người hỏi]   <-- bottleneck
+→ [4 Hỏi lại cả nhóm nếu không tìm được: 5' - cả nhóm]
+→ [5 Viết lại kết luận vào tài liệu]
 
-FUTURE STATE — 5 phút
+Handoff yếu: quyết định nằm lẫn trong chat dài, không có tiêu đề và không ai tổng
+kết lại, nên search keyword ra hàng chục message không liên quan. Bước 4 còn kéo
+thêm 3 người khác vào việc của 1 người.
 
-[1 Rule: decision log 1 dòng/quyết định ngay khi chốt: 1' - người]
-→ [2 Tra decision log / semantic search trên chat export: 2' - máy/AI]
-→ [3 Người mở link thread gốc kiểm lại trước khi dùng: 2']  <-- human boundary
+FUTURE STATE — 3 bước, 5 phút
 
-Fallback: nếu search trả lời sai hoặc không có nguồn → quay về hỏi trực tiếp
-trong nhóm như hiện tại; decision log vẫn còn giá trị độc lập với AI.
+[1 Decision log: 1 dòng/quyết định ghi ngay khi chốt: 1']    -- Rule (người ghi)
+→ [2 Tra decision log; nếu không có thì semantic search
+   trên chat export: 2']                                     -- Workflow step
+→ [3 Người mở link thread gốc kiểm lại trước khi dùng: 2']   -- Human boundary
+
+Boundary:
+- AI chỉ tìm và trả về đoạn chat liên quan, BẮT BUỘC kèm link tới message gốc.
+- AI KHÔNG tóm tắt thành "quyết định của nhóm" nếu không trỏ được về nguồn.
+
+Fallback:
+Search trả lời sai hoặc không có nguồn → quay về hỏi trực tiếp trong nhóm như hiện
+tại. Decision log ở bước 1 vẫn còn giá trị hoàn toàn độc lập với AI — đây là lý do
+card này Quick gut là "chưa biết": rất có thể chỉ bước 1 đã đủ.
+
+Bottleneck mới:
+Bước 1 — kỷ luật ghi decision log. Nếu nhóm quên ghi thì cả workflow sụp, và đây là
+vấn đề quy trình chứ không phải vấn đề AI.
 ```
+
+| Metric | Trước | Sau kỳ vọng | Ghi chú |
+|---|---:|---:|---|
+| Thời gian 1 lần tra cứu | 30 phút | Dưới 5 phút | Đo bằng cách ghi lại 5 lần tra cứu kế tiếp |
+| Số lần phải hỏi lại cả nhóm | 2-3 lần/tuần | Dưới 1 lần/tuần | Metric thứ hai: đo chi phí lan sang người khác |
+| Risk mới | Không có | AI trả lời sai hoặc bịa "quyết định" không có thật | Bắt buộc kèm link message gốc để người tự kiểm |
 
 
 ---
@@ -258,20 +304,47 @@ Quick gut:
 **Draft workflow Card #3:**
 
 ```text
-CURRENT STATE — 60 phút cho 1 nguồn + so sánh
+CURRENT STATE — 5 bước, ~60 phút cho 1 nguồn + phần so sánh
 
-[1 Tìm nguồn: 10'] → [2 Đọc nguồn: 30'] → [3 Note tự do: 10']
-→ [4 So sánh các nguồn: 20']  <-- bottleneck
+[1 Tìm nguồn (paper, docs, blog): 10' - người]
+→ [2 Đọc từng nguồn: 30'/nguồn - người]
+→ [3 Note lại ý chính theo cách mỗi người tự nghĩ ra: 10' - người]
+→ [4 So sánh các nguồn, tìm chỗ nói khác nhau: 20' - người]   <-- bottleneck
+→ [5 Viết vào tài liệu đồ án]
 
-FUTURE STATE — 25 phút
+Handoff yếu: note của mỗi người không cùng cấu trúc nên không đối chiếu trực tiếp
+được; người so sánh phải giữ nhiều nguồn trong đầu cùng lúc.
 
-[1 Tìm nguồn: 10' - người] → [2 AI tóm tắt theo template 4 mục: 2' - AI]
-→ [3 AI lập bảng so sánh các nguồn: 1' - AI]
-→ [4 Người đọc kiểm từng ô bằng bản gốc trước khi viết vào tài liệu: 12']  <-- human boundary
+FUTURE STATE — 4 bước, 25 phút
 
-Fallback: nếu AI tóm tắt sai ý hoặc trích dẫn không có trong bản gốc → bỏ bản tóm
-tắt, đọc thẳng nguồn và điền tay vào template 4 mục.
+[1 Tìm nguồn: 10' - người]
+→ [2 AI tóm tắt mỗi nguồn theo template 4 mục
+   (vấn đề / phương pháp / kết quả / hạn chế): 2']            -- Workflow step
+→ [3 AI lập bảng so sánh các nguồn theo đúng 4 mục đó: 1']    -- Workflow step
+→ [4 Người đọc kiểm TỪNG Ô bằng bản gốc trước khi
+   viết vào tài liệu: 12']                                    -- Human boundary
+
+Boundary:
+- AI chỉ tóm tắt và xếp vào template, mỗi ô phải trỏ được về trang/đoạn trong bản gốc.
+- AI KHÔNG kết luận "nguồn nào đúng", KHÔNG tạo trích dẫn, KHÔNG viết thay phần
+  tài liệu nộp.
+
+Fallback:
+AI tóm tắt sai ý hoặc trích dẫn không có trong bản gốc → bỏ bản tóm tắt, đọc thẳng
+nguồn và điền tay vào template 4 mục. Template ở bước 2 là phần non-AI và vẫn giúp
+bước so sánh dễ hơn hẳn dù không có AI.
+
+Bottleneck mới:
+Bước 4 — người kiểm từng ô bằng bản gốc. Không được rút ngắn bước này, vì rủi ro
+lớn nhất của card là trích dẫn sai ý một nguồn rồi đưa thẳng vào tài liệu đồ án.
 ```
+
+| Metric | Trước | Sau kỳ vọng | Ghi chú |
+|---|---:|---:|---|
+| Thời gian đọc-hiểu 1 nguồn | 30 phút | Dưới 12 phút | Target chính |
+| Số nguồn bị trích dẫn sai ý | chưa đếm | 0 | Kiểm bằng cách đọc lại bản gốc trước khi đưa vào tài liệu |
+| Cấu trúc note | mỗi người một kiểu | template 4 mục thống nhất | Phần này là **non-AI**, làm được ngay |
+| Risk mới | Không có | AI tóm tắt sai ý / bịa trích dẫn | Bước 4 kiểm từng ô là bắt buộc |
 
 
 ---
